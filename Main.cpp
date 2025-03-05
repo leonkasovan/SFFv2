@@ -39,8 +39,6 @@ int main(int argc, char* argv[]) {
         std::cout << "Failed to load header." << std::endl;
     }
 
-    sff2File.GetSpriteIndex(1, 0);
-
     streamInterface->Close();
     delete streamInterface;
     return 0;

@@ -3,3 +3,5 @@ obj*
 *.cbp
 *.o
 *.exe
+*.sff
+*.json

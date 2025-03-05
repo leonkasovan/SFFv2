@@ -9,40 +9,34 @@
 #include "../encoding/RLE8.h"
 
 
-SFF2MemBlock::SFF2MemBlock()
-{
-    Offset      = 0;
-    Data        = NULL;
-    Length      = 0;
-    DecompLen   = 0;
+SFF2MemBlock::SFF2MemBlock() {
+    Offset = 0;
+    Data = NULL;
+    Length = 0;
+    DecompLen = 0;
     //ctor
 }
 
-SFF2MemBlock::SFF2MemBlock(SFF2_StreamInterface *in, SFF32_u Ofs, SFF32_u Len)
-{
-    ReadDataFromDisk(in,Ofs,Len);
+SFF2MemBlock::SFF2MemBlock(SFF2_StreamInterface* in, SFF32_u Ofs, SFF32_u Len) {
+    ReadDataFromDisk(in, Ofs, Len);
 }
 
-SFF2MemBlock::~SFF2MemBlock()
-{
-    if (Data)
-    {
-        delete [] Data;
+SFF2MemBlock::~SFF2MemBlock() {
+    if (Data) {
+        delete[] Data;
         Data = NULL;
     }
 }
 
-void SFF2MemBlock::ReadDataFromDisk(SFF2_StreamInterface *in, SFF32_u Ofs, SFF32_u Len)
-{
+void SFF2MemBlock::ReadDataFromDisk(SFF2_StreamInterface* in, SFF32_u Ofs, SFF32_u Len) {
     Offset = Ofs;
     Length = Len;
     in->Seek(Offset);
     Data = new SFF8_u[Len];
-    in->Read((char*)Data, Len);
+    in->Read((char*) Data, Len);
 }
 
-void SFF2MemBlock::TranslateDataFromDisk(SFF2_StreamInterface *in, SFF32_u Ofs, SFF32_u SrcLen, SFF32_u DstLen, SFF16_u Fmt)
-{
+void SFF2MemBlock::TranslateDataFromDisk(SFF2_StreamInterface* in, SFF32_u Ofs, SFF32_u SrcLen, SFF32_u DstLen, SFF16_u Fmt) {
     if (!SrcLen)
         return;
     ReadDataFromDisk(in, Ofs, SrcLen);
@@ -53,28 +47,30 @@ void SFF2MemBlock::TranslateDataFromDisk(SFF2_StreamInterface *in, SFF32_u Ofs, 
     SFF8_u* Decompressed = new SFF8_u[DstLen];
 
     switch (Fmt) {
-        case 1: //Invalid format as of version 2.00
-            std::cerr << "Invalid!";
-            break;
-        case 2: // RLE 8
-            RLE8_Decode(Decompressed, Data, SrcLen);
-            Length = DstLen;
-            break;
-        case 3: //RLE5
-            RLE5_Decode(Decompressed, Data, SrcLen);
-            Length = DstLen;
-            break;
-        case 4: //LZ5
-            LZ5_Decode(Decompressed, Data, SrcLen);
-            Length = DstLen;
-            break;
+    case 1: //Invalid format as of version 2.00
+        std::cerr << "Invalid!";
+        break;
+    case 2: // RLE 8
+        std::cout << "RLE8" << std::endl;
+        RLE8_Decode(Decompressed, Data, SrcLen);
+        Length = DstLen;
+        break;
+    case 3: //RLE5
+        std::cout << "RLE5" << std::endl;
+        RLE5_Decode(Decompressed, Data, SrcLen);
+        Length = DstLen;
+        break;
+    case 4: //LZ5
+        std::cout << "LZ5" << std::endl;
+        LZ5_Decode(Decompressed, Data, SrcLen);
+        Length = DstLen;
+        break;
     }
     if (Data) delete[] Data;
     Data = Decompressed;
 }
 
-void SFF2MemBlock::TranslateData(SFF32_u SrcLen, SFF32_u DstLen, SFF16_u Fmt)
-{
+void SFF2MemBlock::TranslateData(SFF32_u SrcLen, SFF32_u DstLen, SFF16_u Fmt) {
     /* This function needs to return some type of value for error checking for the following reasons:
         -No sprite data pointed in Data, which will lead to undefined results
     */
@@ -86,21 +82,21 @@ void SFF2MemBlock::TranslateData(SFF32_u SrcLen, SFF32_u DstLen, SFF16_u Fmt)
     SFF8_u* Decompressed = new SFF8_u[DstLen];
 
     switch (Fmt) {
-        case 1: //Invalid format as of version 2.00
-            std::cerr << "Invalid!";
-            break;
-        case 2: // RLE 8
-            RLE8_Decode(Decompressed, Data, SrcLen);
-            Length = DstLen;
-            break;
-        case 3: //RLE5
-            RLE5_Decode(Decompressed, Data, SrcLen);
-            Length = DstLen;
-            break;
-        case 4: //LZ5
-            LZ5_Decode(Decompressed, Data, SrcLen);
-            Length = DstLen;
-            break;
+    case 1: //Invalid format as of version 2.00
+        std::cerr << "Invalid!";
+        break;
+    case 2: // RLE 8
+        RLE8_Decode(Decompressed, Data, SrcLen);
+        Length = DstLen;
+        break;
+    case 3: //RLE5
+        RLE5_Decode(Decompressed, Data, SrcLen);
+        Length = DstLen;
+        break;
+    case 4: //LZ5
+        LZ5_Decode(Decompressed, Data, SrcLen);
+        Length = DstLen;
+        break;
     }
     if (Data) delete[] Data;
     Data = Decompressed;
